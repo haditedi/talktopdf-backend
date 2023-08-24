@@ -21,22 +21,22 @@ def process_data(param):
 
     loader = PyPDFLoader(param)
     pages = loader.load_and_split()
-    print("PAGES",pages)
-    # text_splitter = CharacterTextSplitter(
-    #     chunk_size=500, chunk_overlap=20, separator="\n"
-    # )
-    # texts = text_splitter.split_documents(documents=param)
+    # print("PAGES",pages)
+    text_splitter = CharacterTextSplitter(
+        chunk_size=500, chunk_overlap=20, separator="\n"
+    )
+    texts = text_splitter.split_documents(documents=pages)
     # print("TEXTS",texts)
-    # print(len(texts))
-    # random_name = names.get_full_name()
-    # random_name = random_name + str(random.randrange(1,500))
-    # print(random_name)
-    # doc_store = Pinecone.from_documents(
-    #     documents=texts, embedding=embeddings, index_name=index_name, namespace=random_name
-    # )
-    # delete_after_delay("testelon2", random_name, 30)
-    # print("END")
-    # return random_name
+    print(len(texts))
+    random_name = names.get_full_name()
+    random_name = random_name + str(random.randrange(1,500))
+    print(random_name)
+    doc_store = Pinecone.from_documents(
+        documents=texts, embedding=embeddings, index_name=index_name, namespace=random_name
+    )
+    # delete_after_delay("testelon2", random_name, param, 30)
+    
+    return random_name
    
 
-process_data("event.pdf")
+# process_data("credit.pdf")

@@ -27,7 +27,9 @@ def chat_pdf(query, namespace):
         verbose=True, memory = memory
     )
     result = chain({"question": query})
+    print("CHAT_PDF",result["answer"])
     return result["answer"]
+# chat_pdf("hi", "Thomas Hartman333")
 
 # while True:
 #     get_input = input("query : ")
