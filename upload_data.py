@@ -1,22 +1,16 @@
-from langchain.document_loaders import TextLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import Pinecone
 from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.chains import RetrievalQA
-from langchain.memory import ConversationBufferMemory
-from langchain.chains import ConversationalRetrievalChain
 from langchain.document_loaders import PyPDFLoader
-from langchain.document_loaders import UnstructuredPDFLoader
-from langchain.text_splitter import CharacterTextSplitter
+from helper import delete_after_delay
 
+import names
+import random
 import pinecone
 from dotenv import load_dotenv
 import os
-import openai
-
 
 load_dotenv()
-
 
 def process_data(param):
     pinecone.init(
@@ -25,26 +19,24 @@ def process_data(param):
     index_name = "testelon2"
     embeddings = OpenAIEmbeddings()
 
-    loader = UnstructuredPDFLoader(param)
     loader = PyPDFLoader(param)
     pages = loader.load_and_split()
-    # print(pages)
-    text_splitter = CharacterTextSplitter(
-        chunk_size=500, chunk_overlap=20, separator="\n"
-    )
-    texts = text_splitter.split_documents(documents=pages)
-    # print(texts)
-    print(len(texts))
-    # loader = TextLoader(param,autodetect_encoding=True)
-    # documents = loader.load()
-    # documents = documents[0].page_content
-    # text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=20, separator="\n")
-    # texts = text_splitter.split_documents(documents=documents)
-    # print("Length", documents[0].page_content)
-    doc_store = Pinecone.from_documents(
-        documents=texts, embedding=embeddings, index_name=index_name, namespace="olala"
-    )
-    # qa = RetrievalQA.from_chain_type(llm = OpenAI(), chain_type="stuff", retriever=doc_store.as_retriever())
-
+    print("PAGES",pages)
+    # text_splitter = CharacterTextSplitter(
+    #     chunk_size=500, chunk_overlap=20, separator="\n"
+    # )
+    # texts = text_splitter.split_documents(documents=param)
+    # print("TEXTS",texts)
+    # print(len(texts))
+    # random_name = names.get_full_name()
+    # random_name = random_name + str(random.randrange(1,500))
+    # print(random_name)
+    # doc_store = Pinecone.from_documents(
+    #     documents=texts, embedding=embeddings, index_name=index_name, namespace=random_name
+    # )
+    # delete_after_delay("testelon2", random_name, 30)
+    # print("END")
+    # return random_name
+   
 
 process_data("event.pdf")

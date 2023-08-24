@@ -6,21 +6,19 @@ load_dotenv()
 
 pinecone.init(api_key=os.environ["PINECONE_API_KEY"], environment="us-west4-gcp-free")
 
-index="testelon2"
-namespace="olala"
-
-def delete_index(index,namespace):
+def delete_namespace(index,namespace):
     index = pinecone.Index(index)
     index.delete(delete_all=True, namespace=namespace)
 
 import threading
 import time
 
-def delete_after_delay(item_to_delete, namespace, delay_seconds):
+def delete_after_delay(index, namespace, delay_seconds):
     def delete_item():
+        print(f"Deleting {namespace} after {delay_seconds} seconds")
         time.sleep(delay_seconds)
-        delete_index(item_to_delete, namespace)
-        print(f"Deleting {item_to_delete} after {delay_seconds} seconds")
+        delete_namespace(index, namespace)
+        
 
         # Perform the deletion operation here
         # For example, you could delete a file, remove an item from a list, etc.
@@ -36,10 +34,12 @@ def delete_after_delay(item_to_delete, namespace, delay_seconds):
     deletion_thread = threading.Thread(target=delete_item)
     deletion_thread.start()
 
+
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+    allowed_extensions = {'pdf'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
 
 
-# delete_after_delay(index, namespace, 5)
+# delete_after_delay("testelon2", "Paul Brunette357",1)
 
