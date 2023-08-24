@@ -50,13 +50,27 @@ def delete_one(index, namespace):
         print(f"{namespace} deleted")
     except Exception as e:
         print("something went wrong ",e)
+
+def create_index(name):
+    try:
+        pinecone.create_index(name, dimension=1536, metric="euclidean")
+        print(f"{name} created")
+    except Exception as e:
+        print("something went wrong ",e)
+
+def delete_index(name):
+    try:
+        pinecone.delete_index(name)
+        print(f"{name} deleted")
+    except Exception as e:
+        print("something went wrong ",e)
     
 
 def allowed_file(filename):
     allowed_extensions = {'pdf'}
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
-
+# delete_index("testelon2")
 # delete_one("testelon2", "Mary Muske13")
 # delete_after_delay("testelon2", "Paul Brunette357",1)
-
+# create_index("testelon")

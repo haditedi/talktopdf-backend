@@ -13,7 +13,7 @@ pinecone.init(api_key=os.environ["PINECONE_API_KEY"], environment="us-west4-gcp-
 
 def chat_pdf(query, namespace):
     embeddings = OpenAIEmbeddings()
-    index_name = "testelon2"
+    index_name = "testelon"
 
     retriever = Pinecone.from_existing_index(embedding=embeddings, index_name=index_name, namespace=namespace)
 

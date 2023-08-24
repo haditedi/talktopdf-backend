@@ -16,7 +16,7 @@ def process_data(param):
     pinecone.init(
         api_key=os.environ["PINECONE_API_KEY"], environment="us-west4-gcp-free"
     )
-    index_name = "testelon2"
+    index_name = "testelon"
     embeddings = OpenAIEmbeddings()
 
     loader = PyPDFLoader(param)
