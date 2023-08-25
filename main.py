@@ -1,24 +1,28 @@
 from flask import Flask, jsonify, request, make_response
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
+# from google.cloud import storage
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address
 from pypdf import PdfReader
 from dotenv import load_dotenv
 from helper import allowed_file
+from helper import delete_after_delay
 from upload_data import process_data
 from chat_pdf import chat_pdf
+from storageG import upload_blob_from_stream
 import os
 import openai
 
 load_dotenv()
 
-UPLOAD_FOLDER="./upload"
+BUCKET_NAME="talktopdf.appspot.com"
+PUBLIC_BUCKET="https://storage.googleapis.com/talktopdf.appspot.com/"
+INDEX="testelon"
+
 app = Flask(__name__)
 
-# Configuration for file upload
 CORS(app)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # CORS(app, resources={r"/": {"origins": "http://127.0.0.1:5173/"}})
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -30,6 +34,8 @@ def converse():
         data = request.json
         print("DATA",data)
         query = data["query"]
+        if query == "":
+            return {"error" : "input must not be empty"}
         print("QUERY",query)
         namespace = data["namespace"]
         print("NAMESPACE",namespace)
@@ -54,10 +60,14 @@ def upload():
 
         if file and allowed_file(file.filename):
             if secure_filename(file.filename):
-                path_location=os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-                file.save(path_location) 
-                namespace = process_data(path_location)
-                print(namespace)
+                # path_location=os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+                # file.save(path_location)
+                upload_blob_from_stream(BUCKET_NAME, file, file.filename) 
+                # upload_blob(BUCKET_NAME, path_location, file.filename)
+                print("URL",f"{PUBLIC_BUCKET}{file.filename}")
+                namespace = process_data(f"{PUBLIC_BUCKET}{file.filename}")
+                delete_after_delay(INDEX,namespace,BUCKET_NAME,file.filename,60*60)
+                print("NAMESPACE",namespace)
                   
                 return {"message": "File uploaded successfully", "namespace": namespace, "status":"ok"}
         else:

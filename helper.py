@@ -1,5 +1,6 @@
 import pinecone
 from dotenv import load_dotenv
+from storageG import delete_blob
 import os
 
 load_dotenv()
@@ -7,8 +8,12 @@ load_dotenv()
 pinecone.init(api_key=os.environ["PINECONE_API_KEY"], environment="us-west4-gcp-free")
 
 def delete_namespace(index,namespace):
-    index = pinecone.Index(index)
-    index.delete(delete_all=True, namespace=namespace)
+    try:
+        index = pinecone.Index(index)
+        index.delete(delete_all=True, namespace=namespace)
+        print(f"{namespace} namespace deleted")
+    except Exception as e:
+        print("ERROR delete namespace ",e)
 
 def delete_pdf(path_location):
     if os.path.exists(path_location):
@@ -20,13 +25,13 @@ def delete_pdf(path_location):
 import threading
 import time
 
-def delete_after_delay(index, namespace, path_location, delay_seconds):
+def delete_after_delay(index, namespace, bucket_name,blob_name, delay_seconds):
     def delete_item():
         print(f"Deleting {namespace} after {delay_seconds} seconds")
         time.sleep(delay_seconds)
-        delete_pdf(path_location)
+        delete_blob(bucket_name, blob_name)
         delete_namespace(index, namespace)
-        print(f"{namespace} deleted")
+        
         
 
         # Perform the deletion operation here

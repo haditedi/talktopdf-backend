@@ -13,6 +13,7 @@ import os
 load_dotenv()
 
 def process_data(param):
+    # this function also handle deletion
     pinecone.init(
         api_key=os.environ["PINECONE_API_KEY"], environment="us-west4-gcp-free"
     )
@@ -31,10 +32,10 @@ def process_data(param):
     random_name = names.get_full_name()
     random_name = random_name + str(random.randrange(1,500))
     print(random_name)
-    doc_store = Pinecone.from_documents(
+    Pinecone.from_documents(
         documents=texts, embedding=embeddings, index_name=index_name, namespace=random_name
     )
-    # delete_after_delay("testelon2", random_name, param, 30)
+    # delete_after_delay("testelon", random_name, param, 30)
     
     return random_name
    
