@@ -2,6 +2,7 @@ import pinecone
 from dotenv import load_dotenv
 from storageG import delete_blob
 import os
+import asyncio
 
 load_dotenv()
 
@@ -25,7 +26,7 @@ def delete_pdf(path_location):
 import threading
 import time
 
-def delete_after_delay(index, namespace, bucket_name,blob_name, delay_seconds):
+async def delete_after_delay(index, namespace, bucket_name,blob_name, delay_seconds):
     print(f"Deleting {namespace} after {delay_seconds} seconds")
     time.sleep(delay_seconds)
     delete_blob(bucket_name, blob_name)
@@ -62,3 +63,23 @@ def allowed_file(filename):
 # delete_one("testelon", "Le Needham357")
 # delete_after_delay("testelon2", "Paul Brunette357",1)
 # create_index("testelon")
+
+
+
+# async def async_function():
+#     print("Start async_function")
+#     time.sleep(2)
+#     # await asyncio.sleep(2)  # Simulate some asynchronous task
+#     print("Async_function completed")
+
+# async def main():
+#     print("Main program start")
+#     asyncio.create_task(async_function())
+#     print("Main program end")
+
+# asyncio.run(main())
+
+
+
+
+

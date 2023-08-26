@@ -7,13 +7,14 @@ from werkzeug.utils import secure_filename
 from pypdf import PdfReader
 from dotenv import load_dotenv
 from helper import allowed_file
-from helper import delete_after_delay
+# from helper import delete_after_delay
 from upload_data import process_data
 from chat_pdf import chat_pdf
 from storageG import upload_blob_from_stream
 import os
 import openai
 import random
+# import asyncio
 
 load_dotenv()
 
@@ -48,7 +49,7 @@ def converse():
             return {"content" : "something went wrong"}
 
 @app.route("/upload", methods=["POST","GET"])
-def upload():
+async def upload():
     print("UPLOAD",request.files)
     if request.method == "POST":
         if 'file' not in request.files:
@@ -69,7 +70,7 @@ def upload():
                 # upload_blob(BUCKET_NAME, path_location, file.filename)
                 print("URL",f"{PUBLIC_BUCKET}{destination_filename}")
                 namespace = process_data(f"{PUBLIC_BUCKET}{destination_filename}")
-                delete_after_delay(INDEX,namespace,BUCKET_NAME,destination_filename,60*5)
+                # asyncio.create_task(delete_after_delay(INDEX,namespace,BUCKET_NAME,destination_filename,60*5))
                 print("NAMESPACE",namespace)
                   
                 return {"message": "File uploaded successfully", "namespace": namespace, "status":"ok"}
