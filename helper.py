@@ -26,27 +26,10 @@ import threading
 import time
 
 def delete_after_delay(index, namespace, bucket_name,blob_name, delay_seconds):
-    def delete_item():
-        print(f"Deleting {namespace} after {delay_seconds} seconds")
-        time.sleep(delay_seconds)
-        delete_blob(bucket_name, blob_name)
-        delete_namespace(index, namespace)
-        
-        
-
-        # Perform the deletion operation here
-        # For example, you could delete a file, remove an item from a list, etc.
-        # Replace the following line with the actual deletion operation
-
-        # Example: Deleting a file
-        # import os
-        # os.remove(item_to_delete)
-
-        # Example: Removing an item from a list
-        # my_list.remove(item_to_delete)
-
-    deletion_thread = threading.Thread(target=delete_item)
-    deletion_thread.start()
+    print(f"Deleting {namespace} after {delay_seconds} seconds")
+    time.sleep(delay_seconds)
+    delete_blob(bucket_name, blob_name)
+    delete_namespace(index, namespace)
 
 def delete_one(index, namespace):
     index = pinecone.Index(index)
