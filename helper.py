@@ -76,6 +76,6 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
 # delete_index("testelon2")
-delete_one("testelon", "Le Needham357")
+# delete_one("testelon", "Le Needham357")
 # delete_after_delay("testelon2", "Paul Brunette357",1)
 # create_index("testelon")
