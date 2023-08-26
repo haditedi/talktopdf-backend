@@ -49,7 +49,7 @@ def converse():
             return {"content" : "something went wrong"}
 
 @app.route("/upload", methods=["POST","GET"])
-async def upload():
+def upload():
     print("UPLOAD",request.files)
     if request.method == "POST":
         if 'file' not in request.files:
