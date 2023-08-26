@@ -26,7 +26,7 @@ def delete_pdf(path_location):
 import threading
 import time
 
-async def delete_after_delay(index, namespace, bucket_name,blob_name, delay_seconds):
+def delete_after_delay(index, namespace, bucket_name,blob_name, delay_seconds):
     print(f"Deleting {namespace} after {delay_seconds} seconds")
     time.sleep(delay_seconds)
     delete_blob(bucket_name, blob_name)

@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 from pypdf import PdfReader
 from dotenv import load_dotenv
 from helper import allowed_file
-# from helper import delete_after_delay
+from helper import delete_after_delay
 from upload_data import process_data
 from chat_pdf import chat_pdf
 from storageG import upload_blob_from_stream
@@ -68,15 +68,31 @@ def upload():
                 destination_filename = random_int+file.filename
                 upload_blob_from_stream(BUCKET_NAME, file, destination_filename) 
                 # upload_blob(BUCKET_NAME, path_location, file.filename)
+                # bucket_url=f"{PUBLIC_BUCKET}{destination_filename}"
                 print("URL",f"{PUBLIC_BUCKET}{destination_filename}")
                 namespace = process_data(f"{PUBLIC_BUCKET}{destination_filename}")
-                # asyncio.create_task(delete_after_delay(INDEX,namespace,BUCKET_NAME,destination_filename,60*5))
+                # delete_after_delay(INDEX,namespace,BUCKET_NAME,destination_filename,60*5)
                 print("NAMESPACE",namespace)
-                  
-                return {"message": "File uploaded successfully", "namespace": namespace, "status":"ok"}
+                print("DESTINATION FILE NAME", destination_filename)  
+                return {"message": "File uploaded successfully", "namespace": namespace, "destination_file_name":destination_filename, "status":"ok"}
         else:
             return {"error": "Invalid file format"}, 400
-        
+
+@app.route("/delete", methods=["POST"])
+def delete():  
+    data = request.json
+    print("DELETE", data)
+    try:     
+        namespace = data["namespace"]
+        destination_file_name = data["destinationFileName"]
+        # print("QUERY", query)
+        print("NAMESPACE",namespace)
+        delete_after_delay(INDEX,namespace,BUCKET_NAME,destination_file_name,60*5)
+        return jsonify()
+    except Exception as e:
+        return jsonify(e)
+
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
