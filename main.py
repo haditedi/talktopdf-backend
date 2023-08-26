@@ -13,6 +13,7 @@ from chat_pdf import chat_pdf
 from storageG import upload_blob_from_stream
 import os
 import openai
+import random
 
 load_dotenv()
 
@@ -32,12 +33,13 @@ def converse():
     if request.method == "POST":
         print("CONVERSE")
         data = request.json
-        print("DATA",data)
-        query = data["query"]
-        if query == "":
-            return {"error" : "input must not be empty"}
-        print("QUERY",query)
-        namespace = data["namespace"]
+        try:
+            query = data["query"]  
+            namespace = data["namespace"]
+            print("QUERY", query)
+            print("NAMESPACE",namespace)
+        except Exception as e:
+            return jsonify(e)
         print("NAMESPACE",namespace)
         if query != "" and namespace != "":
             result = chat_pdf(query, namespace)
@@ -49,7 +51,6 @@ def converse():
 def upload():
     print("UPLOAD",request.files)
     if request.method == "POST":
-    
         if 'file' not in request.files:
             return {"error": "No file part"}, 400
 
@@ -62,11 +63,13 @@ def upload():
             if secure_filename(file.filename):
                 # path_location=os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
                 # file.save(path_location)
-                upload_blob_from_stream(BUCKET_NAME, file, file.filename) 
+                random_int = str(random.randrange(1,500))
+                destination_filename = random_int+file.filename
+                upload_blob_from_stream(BUCKET_NAME, file, destination_filename) 
                 # upload_blob(BUCKET_NAME, path_location, file.filename)
-                print("URL",f"{PUBLIC_BUCKET}{file.filename}")
-                namespace = process_data(f"{PUBLIC_BUCKET}{file.filename}")
-                delete_after_delay(INDEX,namespace,BUCKET_NAME,file.filename,60*60)
+                print("URL",f"{PUBLIC_BUCKET}{destination_filename}")
+                namespace = process_data(f"{PUBLIC_BUCKET}{destination_filename}")
+                delete_after_delay(INDEX,namespace,BUCKET_NAME,destination_filename,60*5)
                 print("NAMESPACE",namespace)
                   
                 return {"message": "File uploaded successfully", "namespace": namespace, "status":"ok"}
