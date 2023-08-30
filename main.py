@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, make_response
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 # from google.cloud import storage
@@ -50,13 +50,13 @@ def converse():
 
 @app.route("/upload", methods=["POST","GET"])
 def upload():
-    print("UPLOAD",request.files)
+    print("UPLOAD",request.files["file"])
     if request.method == "POST":
         if 'file' not in request.files:
             return {"error": "No file part"}, 400
 
         file = request.files['file']
-        
+        # print("FILES", file.content_length)
         if file.filename == '':
             return {"error": "No selected file"}, 400
 
