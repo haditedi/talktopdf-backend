@@ -10,7 +10,7 @@ from helper import allowed_file
 from helper import delete_after_delay
 from upload_data import process_data
 from chat_pdf import chat_pdf
-from storageG import upload_blob_from_stream
+from storageG import upload_blob_from_stream, delete_blob
 import os
 import openai
 import random
@@ -85,9 +85,10 @@ def delete():
     try:     
         namespace = data["namespace"]
         destination_file_name = data["destinationFileName"]
+        delete_blob(BUCKET_NAME,destination_file_name)
         # print("QUERY", query)
         print("NAMESPACE",namespace)
-        delete_after_delay(INDEX,namespace,BUCKET_NAME,destination_file_name,60*5)
+        delete_after_delay(INDEX,namespace,60*5)
         return jsonify()
     except Exception as e:
         return jsonify(e)
