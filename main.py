@@ -23,8 +23,8 @@ INDEX="testelon"
 app = Flask(__name__)
 
 # CORS(app)
-CORS(app, resources={r"/": {"origins": "http://127.0.0.1:5173/"}})
-# CORS(app, resources={r"/": {"origins": "https://talktopdf.vercel.app"}})
+# CORS(app, resources={r"/": {"origins": "http://127.0.0.1:5173/"}})
+CORS(app, resources={r"/": {"origins": "https://talktopdf.vercel.app"}})
 app.config['MAX_CONTENT_LENGTH'] = 10*1024*1024
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -52,11 +52,7 @@ def converse():
 def upload():
     print("UPLOAD",request.files["file"])
     print("UPLOAD FILES",request.files)
-    try:
-        
-        return jsonify({"content": "file too large", "status": "413"})
-    except Exception as e:
-        return jsonify(e)
+ 
     if request.method == "POST":
         if 'file' not in request.files:
             return {"error": "No file part"}, 400
@@ -78,6 +74,7 @@ def upload():
                 print("URL",f"{PUBLIC_BUCKET}{destination_filename}")
                 namespace = process_data(f"{PUBLIC_BUCKET}{destination_filename}")
                 # delete_after_delay(INDEX,namespace,BUCKET_NAME,destination_filename,60*5)
+                delete_blob(BUCKET_NAME,destination_filename)
                 print("NAMESPACE",namespace)
                 print("DESTINATION FILE NAME", destination_filename)  
                 return {"message": "File uploaded successfully", "namespace": namespace, "destination_file_name":destination_filename, "status":"ok"}
@@ -90,8 +87,6 @@ def delete():
     print("DELETE", data)
     try:     
         namespace = data["namespace"]
-        destination_file_name = data["destinationFileName"]
-        delete_blob(BUCKET_NAME,destination_file_name)
         # print("QUERY", query)
         print("NAMESPACE",namespace)
         delete_after_delay(INDEX,namespace,60*5)
