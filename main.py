@@ -25,7 +25,7 @@ app = Flask(__name__)
 # CORS(app)
 # CORS(app, resources={r"/": {"origins": "http://127.0.0.1:5173/"}})
 CORS(app, resources={r"/": {"origins": "https://talktopdf.vercel.app"}})
-app.config['MAX_CONTENT_LENGTH'] = 10*1024*1024
+app.config['MAX_CONTENT_LENGTH'] = 5*1024*1024
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 @app.route("/", methods=["POST"])

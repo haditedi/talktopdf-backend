@@ -60,7 +60,14 @@ def allowed_file(filename):
 # delete_one("testelon", "Patricia Devito175")
 # delete_after_delay("testelon2", "Paul Brunette357",1)
 # create_index("testelon")
+def delete_all_namespace(index):
+    index = pinecone.Index(index)
+    namespaces = index.describe_index_stats().namespaces
+    for x in namespaces:
+        index.delete(delete_all=True, namespace=x)
+        print(f"{x} namespace deleted")
 
+# delete_all_namespace("testelon")
 
 
 
