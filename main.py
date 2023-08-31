@@ -4,7 +4,6 @@ from werkzeug.utils import secure_filename
 # from google.cloud import storage
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address
-from pypdf import PdfReader
 from dotenv import load_dotenv
 from helper import allowed_file
 from helper import delete_after_delay
@@ -14,7 +13,6 @@ from storageG import upload_blob_from_stream, delete_blob
 import os
 import openai
 import random
-# import asyncio
 
 load_dotenv()
 
@@ -24,9 +22,10 @@ INDEX="testelon"
 
 app = Flask(__name__)
 
-CORS(app)
-# CORS(app, resources={r"/": {"origins": "http://127.0.0.1:5173/"}})
-
+# CORS(app)
+CORS(app, resources={r"/": {"origins": "http://127.0.0.1:5173/"}})
+# CORS(app, resources={r"/": {"origins": "https://talktopdf.vercel.app"}})
+app.config['MAX_CONTENT_LENGTH'] = 10*1024*1024
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 @app.route("/", methods=["POST"])
@@ -39,6 +38,7 @@ def converse():
             namespace = data["namespace"]
             print("QUERY", query)
             print("NAMESPACE",namespace)
+            print("REQ",request.headers)
         except Exception as e:
             return jsonify(e)
         print("NAMESPACE",namespace)
@@ -51,12 +51,18 @@ def converse():
 @app.route("/upload", methods=["POST","GET"])
 def upload():
     print("UPLOAD",request.files["file"])
+    print("UPLOAD FILES",request.files)
+    try:
+        
+        return jsonify({"content": "file too large", "status": "413"})
+    except Exception as e:
+        return jsonify(e)
     if request.method == "POST":
         if 'file' not in request.files:
             return {"error": "No file part"}, 400
 
         file = request.files['file']
-        # print("FILES", file.content_length)
+        
         if file.filename == '':
             return {"error": "No selected file"}, 400
 
@@ -92,8 +98,6 @@ def delete():
         return jsonify()
     except Exception as e:
         return jsonify(e)
-
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
