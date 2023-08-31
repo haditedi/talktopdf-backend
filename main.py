@@ -89,7 +89,7 @@ def delete():
         namespace = data["namespace"]
         # print("QUERY", query)
         print("NAMESPACE",namespace)
-        delete_after_delay(INDEX,namespace,60*5)
+        delete_after_delay(INDEX,namespace,60*60*2)
         return jsonify()
     except Exception as e:
         return jsonify(e)
