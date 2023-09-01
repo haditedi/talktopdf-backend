@@ -50,14 +50,17 @@ def converse():
 
 @app.route("/upload", methods=["POST","GET"])
 def upload():
-    print("UPLOAD",request.files["file"])
-    print("UPLOAD FILES",request.files)
  
     if request.method == "POST":
         if 'file' not in request.files:
             return {"error": "No file part"}, 400
 
         file = request.files['file']
+        extension = file.filename[-3:].lower()
+        print("EXTENSION", extension)
+        if extension != "pdf":
+            print("FILE")
+            return {"error":"PDF file only please"},400
         
         if file.filename == '':
             return {"error": "No selected file"}, 400
