@@ -84,18 +84,25 @@ def upload():
         else:
             return {"error": "Invalid file format"}, 400
 
-@app.route("/delete", methods=["POST"])
-def delete():  
-    data = request.json
-    print("DELETE", data)
-    try:     
-        namespace = data["namespace"]
-        # print("QUERY", query)
-        print("NAMESPACE",namespace)
-        delete_after_delay(INDEX,namespace,60*60*2)
-        return jsonify()
-    except Exception as e:
-        return jsonify(e)
+@app.route("/delete", methods=["POST","GET"])
+def delete():
+    if request.method == "POST":          
+        print("DELETE - POST", data)
+        try:    
+            data = request.json 
+            namespace = data["namespace"]
+            # print("QUERY", query)
+            print("NAMESPACE",namespace)
+            delete_after_delay(INDEX,namespace,60*60*2)
+            return jsonify()
+        except Exception as e:
+            return jsonify(e)
+    
+    if request.method == "GET":
+        print(request.headers)
+        if request.headers['X-Appengine-Cron'] == "true":
+            print("TRUE")
+        return {"status":"ok", "content": "deleted"},200
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
