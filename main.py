@@ -89,19 +89,9 @@ def upload():
 
 @app.route("/delete", methods=["POST","GET"])
 def delete():
-    if request.method == "POST":          
-        
-        try:    
-            data = request.json 
-            print("DELETE - POST", data)
-            namespace = data["namespace"]
-            # print("QUERY", query)
-            print("NAMESPACE",namespace)
-            delete_after_delay(INDEX,namespace,60*60*2)
-            return jsonify()
-        except Exception as e:
-            return jsonify(e)
-    
+    if request.method == "POST":
+        return {"status":"Error", "content":"error"},400   
+              
     if request.method == "GET":
         logging.info("DELETE /GET", request.headers)
         print(request.headers)
