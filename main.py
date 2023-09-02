@@ -6,13 +6,14 @@ from werkzeug.utils import secure_filename
 # from flask_limiter.util import get_remote_address
 from dotenv import load_dotenv
 from helper import allowed_file
-from helper import delete_after_delay
+from helper import delete_after_delay, delete_all_namespace
 from upload_data import process_data
 from chat_pdf import chat_pdf
 from storageG import upload_blob_from_stream, delete_blob
 import os
 import openai
 import random
+import logging
 
 load_dotenv()
 
@@ -30,6 +31,8 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 @app.route("/", methods=["POST"])
 def converse():
+    if request.method == "GET":
+        return {"status":"Error", "content":"error"},400
     if request.method == "POST":
         print("CONVERSE")
         data = request.json
@@ -87,9 +90,10 @@ def upload():
 @app.route("/delete", methods=["POST","GET"])
 def delete():
     if request.method == "POST":          
-        print("DELETE - POST", data)
+        
         try:    
             data = request.json 
+            print("DELETE - POST", data)
             namespace = data["namespace"]
             # print("QUERY", query)
             print("NAMESPACE",namespace)
@@ -99,8 +103,10 @@ def delete():
             return jsonify(e)
     
     if request.method == "GET":
+        logging.info("DELETE /GET", request.headers)
         print(request.headers)
         if request.headers['X-Appengine-Cron'] == "true":
+            delete_all_namespace(INDEX)
             print("TRUE")
         return {"status":"ok", "content": "deleted"},200
 
