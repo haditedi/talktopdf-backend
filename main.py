@@ -17,6 +17,7 @@ import logging
 
 load_dotenv()
 
+PROJECT_NAME="talktopdf"
 BUCKET_NAME="talktopdf.appspot.com"
 PUBLIC_BUCKET="https://storage.googleapis.com/talktopdf.appspot.com/"
 INDEX="testelon"
@@ -75,12 +76,12 @@ def upload():
                 random_int = str(random.randrange(1,500))
                 destination_filename = random_int+file.filename
                 upload_blob_from_stream(BUCKET_NAME, file, destination_filename) 
-                # upload_blob(BUCKET_NAME, path_location, file.filename)
                 # bucket_url=f"{PUBLIC_BUCKET}{destination_filename}"
-                print("URL",f"{PUBLIC_BUCKET}{destination_filename}")
-                namespace = process_data(f"{PUBLIC_BUCKET}{destination_filename}")
+                # print("URL",f"{PUBLIC_BUCKET}{destination_filename}")
+                # namespace = process_data(f"{PUBLIC_BUCKET}{destination_filename}") 
+                namespace = process_data(project_name=PROJECT_NAME, bucket=BUCKET_NAME,blob_name=destination_filename) 
                 # delete_after_delay(INDEX,namespace,BUCKET_NAME,destination_filename,60*5)
-                delete_blob(BUCKET_NAME,destination_filename)
+                # delete_blob(BUCKET_NAME,destination_filename)
                 print("NAMESPACE",namespace)
                 print("DESTINATION FILE NAME", destination_filename)  
                 return {"message": "File uploaded successfully", "namespace": namespace, "destination_file_name":destination_filename, "status":"ok"}
