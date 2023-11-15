@@ -1,4 +1,3 @@
-
 from google.cloud import storage
 from typing import List
 
@@ -14,14 +13,11 @@ def set_bucket_public_iam(
     bucket = storage_client.bucket(bucket_name)
 
     policy = bucket.get_iam_policy(requested_policy_version=3)
-    policy.bindings.append(
-        {"role": "roles/storage.objectViewer", "members": members}
-    )
+    policy.bindings.append({"role": "roles/storage.objectViewer", "members": members})
 
     bucket.set_iam_policy(policy)
 
     print(f"Bucket {bucket.name} is now publicly readable")
-
 
 
 def authenticate(project_id="your-google-cloud-project-id"):
@@ -32,7 +28,9 @@ def authenticate(project_id="your-google-cloud-project-id"):
         print(bucket.name)
     print("Listed all storage buckets.")
 
+
 # authenticate(project_id="talktopdf")
+
 
 def list_buckets():
     """Lists all buckets."""
@@ -42,13 +40,17 @@ def list_buckets():
 
     for bucket in buckets:
         print(bucket.name)
+
+
 # list_buckets()
+
 
 def list_blobs(bucket_name):
     storage_client = storage.Client()
     blobs = storage_client.list_blobs(bucket_name)
     for blob in blobs:
         print(blob.name)
+
 
 def delete_blob(bucket_name, blob_name):
     try:
@@ -57,7 +59,7 @@ def delete_blob(bucket_name, blob_name):
         bucket = storage_client.bucket(bucket_name)
         blob = bucket.blob(blob_name)
         # generation_match_precondition = None
-        # blob.reload()  
+        # blob.reload()
         # generation_match_precondition = blob.generation
         # blob.delete(if_generation_match=generation_match_precondition)
         blob.delete()
@@ -66,17 +68,19 @@ def delete_blob(bucket_name, blob_name):
     except Exception as e:
         print("ERROR delete blob ", e)
 
+
 def upload_blob(bucket_name, source_file_name, destination_blob_name):
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(destination_blob_name)
     generation_match_precondition = 0
 
-    blob.upload_from_filename(source_file_name, if_generation_match=generation_match_precondition)
-
-    print(
-        f"File {source_file_name} uploaded to {destination_blob_name}."
+    blob.upload_from_filename(
+        source_file_name, if_generation_match=generation_match_precondition
     )
+
+    print(f"File {source_file_name} uploaded to {destination_blob_name}.")
+
 
 def upload_blob_from_stream(bucket_name, file_obj, destination_blob_name):
     """Uploads bytes from a stream or other file-like object to a blob."""
@@ -102,12 +106,12 @@ def upload_blob_from_stream(bucket_name, file_obj, destination_blob_name):
 
     # Upload data from the stream to your bucket.
     blob.upload_from_file(file_obj)
-    print(
-        f"Stream data uploaded to {destination_blob_name} in bucket {bucket_name}."
-    )
-    
+    # blob.upload_from_filename(file_obj)
+    print(f"Stream data uploaded to {destination_blob_name} in bucket {bucket_name}.")
+
+
 # upload_blob("talktopdf.appspot.com","upload/Product Atomy.pdf","Product Atomy.pdf")
 # set_bucket_public_iam(bucket_name="talktopdf.appspot.com",members= ["allUsers"])
 # delete_blob("talktopdf.appspot.com","invoice.pdf")
 # list_blobs("talktopdf.appspot.com")
-# upload_blob_from_stream("talktopdf.appspot.com", file_obj, "OLALA")
+# upload_blob_from_stream("talktopdf.appspot.com", "./upload/credit.pdf", "OLALA")
