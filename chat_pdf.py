@@ -28,14 +28,15 @@ def chat_pdf(query, namespace):
         llm=llm, retriever=retriever.as_retriever(), verbose=True, memory=memory
     )
     result = chain({"question": query})
+    print("RESULT", result)
     print("CHAT_PDF", result["answer"])
     return result["answer"]
 
 
-# chat_pdf("hi", "Corinne Wilcox444")
+# chat_pdf("hi", "Catherine Parton131")
 
-# while True:
-#     get_input = input("query : ")
-#     if get_input == "break":
-#         break
-#     chat_pdf(get_input, "Corinne Wilcox444")
+while True:
+    get_input = input("query : ")
+    if get_input == "break":
+        break
+    chat_pdf(get_input, "Catherine Parton131")
