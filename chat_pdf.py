@@ -23,20 +23,10 @@ def chat_pdf(query, namespace):
     llm = ChatOpenAI(temperature=0, model_name="gpt-3.5-turbo")
 
     memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
-    print(memory)
+
     chain = ConversationalRetrievalChain.from_llm(
         llm=llm, retriever=retriever.as_retriever(), verbose=True, memory=memory
     )
+
     result = chain({"question": query})
-    print("RESULT", result)
-    print("CHAT_PDF", result["answer"])
-    return result["answer"]
-
-
-# chat_pdf("hi", "Catherine Parton131")
-
-while True:
-    get_input = input("query : ")
-    if get_input == "break":
-        break
-    chat_pdf(get_input, "Catherine Parton131")
+    return result
