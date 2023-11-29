@@ -4,7 +4,7 @@ from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 from helper import allowed_file
 from helper import delete_all_namespace
-from upload_data import process_data
+from upload_data import process_data, process_url_data
 from chat_pdf import chat_pdf
 from storageG import upload_blob_from_stream
 import os
@@ -35,14 +35,14 @@ def converse():
         try:
             query = data["query"]
             namespace = data["namespace"]
+            if query != "" and namespace != "":
+                result = chat_pdf(query, namespace)
+                return jsonify({"content": result, "status": "ok"})
+            else:
+                return {"content": "something went wrong"}
+
         except Exception as e:
             return jsonify(e)
-        print("NAMESPACE", namespace)
-        if query != "" and namespace != "":
-            result = chat_pdf(query, namespace)
-            return jsonify({"content": result, "status": "ok"})
-        else:
-            return {"content": "something went wrong"}
 
 
 @app.route("/upload", methods=["POST"])
@@ -78,6 +78,21 @@ def upload():
                 }
         else:
             return {"error": "Invalid file format"}, 400
+
+
+@app.route("/webupload", methods=["POST"])
+def webupload():
+    data = request.json
+    web_address = data["data"]
+    try:
+        namespace = process_url_data(web_address)
+    except Exception as e:
+        return jsonify(e)
+    return {"message": "success", "namespace": namespace}
+    # try:
+
+    # except Exception as e:
+    #     return jsonify(e)
 
 
 @app.route("/delete", methods=["POST", "GET"])

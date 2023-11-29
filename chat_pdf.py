@@ -29,4 +29,8 @@ def chat_pdf(query, namespace):
     )
 
     result = chain({"question": query})
-    return result
+    print(result["answer"])
+    return result["answer"]
+
+
+# chat_pdf("where is byron hotel", "Steven Sokol423")

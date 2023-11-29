@@ -73,4 +73,4 @@ def delete_all_namespace(index):
         print(f"{x} namespace deleted")
 
 
-# delete_all_namespace("testelon")
+delete_all_namespace("testelon")
