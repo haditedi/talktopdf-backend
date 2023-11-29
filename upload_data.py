@@ -2,7 +2,12 @@ from langchain.vectorstores import Pinecone
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.document_loaders import PyPDFLoader
 from langchain.document_loaders import GCSFileLoader
-from langchain.text_splitter import CharacterTextSplitter
+from langchain.text_splitter import (
+    CharacterTextSplitter,
+    RecursiveCharacterTextSplitter,
+)
+from langchain.document_loaders.recursive_url_loader import RecursiveUrlLoader
+from bs4 import BeautifulSoup as Soup
 
 import names
 import random
@@ -41,5 +46,42 @@ def process_data(project_name, bucket, blob_name):
         index_name=index_name,
         namespace=random_name,
     )
+
+    return random_name
+
+
+def process_url_data(url):
+    pinecone.init(
+        api_key=os.environ["PINECONE_API_KEY"], environment="us-west4-gcp-free"
+    )
+    index_name = "testelon"
+    embeddings = OpenAIEmbeddings()
+    loader = RecursiveUrlLoader(
+        url=url, max_depth=5, extractor=lambda x: Soup(x, "html.parser").text
+    )
+    docs = loader.load()
+
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=1000,
+        chunk_overlap=100,
+        length_function=len,
+        is_separator_regex=False,
+    )
+    texts = text_splitter.split_documents(documents=docs)
+    print(len(texts))
+    random_name = names.get_full_name()
+    random_name = random_name + str(random.randrange(1, 500))
+    print(random_name)
+    try:
+        Pinecone.from_documents(
+            documents=texts,
+            embedding=embeddings,
+            index_name=index_name,
+            namespace=random_name,
+        )
+    except Exception as e:
+        return e
+    finally:
+        print("LENGTH", len(texts))
 
     return random_name
