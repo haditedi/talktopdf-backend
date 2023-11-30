@@ -60,6 +60,13 @@ def process_url_data(url):
         url=url, max_depth=5, extractor=lambda x: Soup(x, "html.parser").text
     )
     docs = loader.load()
+    print("DOCS", docs[0])
+    print("LENGTH DOCS", len(docs))
+    for i in docs:
+        item = " ".join(i.page_content.split())
+        i.page_content = item
+        i.metadata = {}
+    print("LENGHT DOCS AFTER", len(docs))
 
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=1000,
@@ -68,10 +75,13 @@ def process_url_data(url):
         is_separator_regex=False,
     )
     texts = text_splitter.split_documents(documents=docs)
-    print(len(texts))
+    print("LENGHT TEXT", len(texts))
+    print("TEXTS", texts[0:7])
+
     random_name = names.get_full_name()
     random_name = random_name + str(random.randrange(1, 500))
     print(random_name)
+
     try:
         Pinecone.from_documents(
             documents=texts,
@@ -80,8 +90,10 @@ def process_url_data(url):
             namespace=random_name,
         )
     except Exception as e:
+        print("ERROR", e)
         return e
-    finally:
-        print("LENGTH", len(texts))
 
     return random_name
+
+
+process_url_data("https://www.londonsyonpark.com")
