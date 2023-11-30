@@ -84,11 +84,13 @@ def upload():
 def webupload():
     data = request.json
     web_address = data["data"]
+    result = {}
     try:
-        namespace = process_url_data(web_address)
+        result = process_url_data(web_address)
     except Exception as e:
         return jsonify(e)
-    return {"message": "success", "namespace": namespace}
+    print(result)
+    return {"message": result["message"], "namespace": result["namespace"]}
     # try:
 
     # except Exception as e:

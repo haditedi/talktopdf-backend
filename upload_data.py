@@ -75,6 +75,9 @@ def process_url_data(url):
         is_separator_regex=False,
     )
     texts = text_splitter.split_documents(documents=docs)
+    if len(texts) > 400:
+        return {"message": "Data too big,,,", "namespace": ""}
+
     print("LENGHT TEXT", len(texts))
     print("TEXTS", texts[0:7])
 
@@ -93,7 +96,7 @@ def process_url_data(url):
         print("ERROR", e)
         return e
 
-    return random_name
+    return {"namespace": random_name, "message": "ok"}
 
 
-process_url_data("https://www.londonsyonpark.com")
+# process_url_data("https://www.londonsyonpark.com")
