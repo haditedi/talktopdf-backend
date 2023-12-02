@@ -60,26 +60,33 @@ def process_url_data(url):
         url=url, max_depth=5, extractor=lambda x: Soup(x, "html.parser").text
     )
     docs = loader.load()
-    print("DOCS", docs[0])
-    print("LENGTH DOCS", len(docs))
+    print("LENGTH LIST", len(docs))
+
+    seen = set()
+    newlist = []
     for i in docs:
+        key = i.page_content
+        if key in seen:
+            continue
+        seen.add(key)
         item = " ".join(i.page_content.split())
         i.page_content = item
         i.metadata = {}
-    print("LENGHT DOCS AFTER", len(docs))
-
+        newlist.append(i)
+    # print("LENGTH NEW LIST", len(newlist))
+    # print("NEWLIST", newlist[0])
+    # print("NEWLIST", newlist[1])
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=1000,
         chunk_overlap=100,
         length_function=len,
         is_separator_regex=False,
     )
-    texts = text_splitter.split_documents(documents=docs)
+    texts = text_splitter.split_documents(documents=newlist)
     if len(texts) > 400:
         return {"message": "Data too big,,,", "namespace": ""}
 
     print("LENGHT TEXT", len(texts))
-    print("TEXTS", texts[0:7])
 
     random_name = names.get_full_name()
     random_name = random_name + str(random.randrange(1, 500))
@@ -99,4 +106,4 @@ def process_url_data(url):
     return {"namespace": random_name, "message": "ok"}
 
 
-# process_url_data("https://www.londonsyonpark.com")
+process_url_data("https://www.londonsyonpark.com")
