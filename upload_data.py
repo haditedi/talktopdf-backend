@@ -106,4 +106,4 @@ def process_url_data(url):
     return {"namespace": random_name, "message": "ok"}
 
 
-process_url_data("https://www.londonsyonpark.com")
+process_url_data("https://www.byronhotel.co.uk")
